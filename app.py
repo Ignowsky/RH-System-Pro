@@ -92,7 +92,7 @@ if st.session_state['dados_rh'] is None:
         with st.spinner("Baixando registros (Query SQL)..."):
             try:
                 # AQUI É O PULO DO GATO: Carrega direto do config, sem upload
-                df_temp = data_manager.load_dataset(config.NEW_DATA_FILE)
+                df_temp = data_manager.load_data(config.NEW_DATA_FILE)
                 st.session_state['dados_rh'] = df_temp
                 st.success(f"Conexão estabelecida! {len(df_temp)} registros carregados.")
                 time.sleep(1)
