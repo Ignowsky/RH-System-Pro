@@ -150,21 +150,35 @@ else:
                                        color_discrete_sequence=['#3366cc'])
                 st.plotly_chart(fig_age, use_container_width=True)
 
-    # ===================================================
-    # ABA 2: PREDIÇÃO (IA)
-    # ===================================================
-    with tab2:
-        st.markdown("### 🤖 Motor de Inteligência Preditiva")
+        # ===================================================
+        # ABA 2: PREDIÇÃO (IA) - CORRIGIDA
+        # ===================================================
+        with tab2:
+            st.markdown("### 🤖 Motor de Inteligência Preditiva")
 
-        if st.button("🧠 EXECUTAR ALGORITMO DE RETENÇÃO"):
-            with st.spinner("Processando rede neural..."):
-                probs = process_and_predict(df_input, model, train_features)
+            # Inicializa a memória para guardar o resultado da IA
+            if 'resultado_ia' not in st.session_state:
+                st.session_state['resultado_ia'] = None
 
-                df_view = df_input.copy()
-                df_view['Probabilidade'] = probs
-                df_view['Risco'] = df_view['Probabilidade'].apply(
-                    lambda x: '🔴 CRÍTICO' if x >= 0.70 else ('🟡 ALERTA' if x >= config.THRESHOLD_ALERT else '🟢 BAIXO')
-                )
+            # Botão apenas GERA o cálculo e salva na memória
+            if st.button("🧠 EXECUTAR ALGORITMO DE RETENÇÃO"):
+                with st.spinner("Processando rede neural..."):
+                    probs = process_and_predict(df_input, model, train_features)
+
+                    df_view = df_input.copy()
+                    df_view['Probabilidade'] = probs
+                    df_view['Risco'] = df_view['Probabilidade'].apply(
+                        lambda x: '🔴 CRÍTICO' if x >= 0.70 else (
+                            '🟡 ALERTA' if x >= config.THRESHOLD_ALERT else '🟢 BAIXO')
+                    )
+
+                    # SALVA NO SESSION STATE (MEMÓRIA)
+                    st.session_state['resultado_ia'] = df_view
+
+            # A EXIBIÇÃO acontece fora do botão, lendo da memória
+            if st.session_state['resultado_ia'] is not None:
+
+                df_view = st.session_state['resultado_ia']
 
                 # KPIs
                 total = len(df_view)
@@ -196,7 +210,10 @@ else:
 
                 # Tabela
                 st.subheader("📋 Relatório Analítico")
+
+                # O Toggle agora funciona porque o df_view vem da memória persistente
                 filtro = st.toggle("Ver apenas Colaboradores em Risco", value=True)
+
                 df_table = df_view.sort_values('Probabilidade', ascending=False)
 
                 if filtro:
@@ -208,6 +225,6 @@ else:
 
                 st.dataframe(
                     df_table[cols_final].style.format({'Probabilidade': '{:.1%}', 'MonthlyIncome': 'R$ {:,.2f}'})
-                    .applymap(lambda v: 'color: red; font-weight: bold;' if v == '🔴 CRÍTICO' else None),
+                    .map(lambda v: 'color: red; font-weight: bold;' if v == '🔴 CRÍTICO' else None),
                     use_container_width=True
                 )
