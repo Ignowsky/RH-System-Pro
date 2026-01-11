@@ -7,7 +7,7 @@ PACKAGE_ROOT = pathlib.Path(__file__).resolve().parent
 # Caminho dos dados
 DATASET_DIR = PACKAGE_ROOT / 'data'
 TRAIN_DATA_FILE = DATASET_DIR / 'raw' / 'HR-Employee-Attrition.csv'
-NEW_DATA_FILE = DATASET_DIR / 'new' / 'Base_Funcionarios_Sintetica_Large.csv'
+NEW_DATA_FILE = DATASET_DIR / 'new' / 'Base_Funcionarios_Sintetica_Large_nova.csv'
 
 # Caminhos de modelos
 MODEL_DIR = PACKAGE_ROOT / 'models'
