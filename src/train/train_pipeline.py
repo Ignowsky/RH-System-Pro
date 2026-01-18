@@ -2,6 +2,7 @@ import sys
 import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
+from xgboost import XGBClassifier
 
 # Ajustando o path para encontrar os módulos irmãos
 sys.path.append(".")
@@ -44,7 +45,6 @@ def encoding_training(df):
 
     return X, y
 
-
 def split_training(X, y):
     """
     Divide os dados em treino e teste.
@@ -65,11 +65,17 @@ def training_model(X_train, y_train):
     """
     print(f"[INFO] Treinando o dataset...")
 
-    model = DecisionTreeClassifier(
-        max_depth=5,
-        min_samples_leaf=50,
-        class_weight='balanced',
-        random_state=config.RANDOM_STATE
+    model = XGBClassifier(
+        scale_pos_weight = 2,
+        learning_rate = 0.1,
+        n_estimators = 750,
+        max_depth = 5,
+        min_child_weight = 6,
+        gamma = 2,
+        colsample_bytree = 0.7,
+        max_delta_step = 1,
+        random_state=config.RANDOM_STATE,
+        n_jobs = -1
     )
 
     model.fit(X_train, y_train)
@@ -102,12 +108,9 @@ def run_pipeline():
     df_clean = cleaning_training(df_raw)
 
     # 3. Encoding & Separate (Chama enconding_data do data_manager)
-    X, y = encoding_training(df_clean)
+    X_train, y_train = encoding_training(df_clean)
 
-    # 4. Split
-    X_train, y_train = split_training(X, y)
-
-    # 5. Train & Save
+    # 4. Train & Save
     training_model(X_train, y_train)
 
 

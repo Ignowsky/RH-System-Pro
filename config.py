@@ -6,14 +6,14 @@ PACKAGE_ROOT = pathlib.Path(__file__).resolve().parent
 
 # Caminho dos dados
 DATASET_DIR = PACKAGE_ROOT / 'data'
-TRAIN_DATA_FILE = DATASET_DIR / 'raw' / 'HR-Employee-Attrition.csv'
-NEW_DATA_FILE = DATASET_DIR / 'new' / 'Base_Funcionarios_Sintetica_Large_nova.csv'
+TRAIN_DATA_FILE = DATASET_DIR / 'raw' / 'HR-Employee-Attrition-50.csv'
+NEW_DATA_FILE = DATASET_DIR / 'new' / 'HR-Employee-Attrition-50.csv'
 
 # Caminhos de modelos
 MODEL_DIR = PACKAGE_ROOT / 'models'
-MODEL_PATH = MODEL_DIR / 'decision_tree_v1.pkl'
+MODEL_PATH = MODEL_DIR / 'xgboost_model_v2.pkl'
 FEATURES_PATH = MODEL_DIR / 'features.pkl'
 
 # Hiperparâmetros de Negócio
-THRESHOLD_ALERT = 0.3
+THRESHOLD_ALERT = 0.30
 RANDOM_STATE = 42
