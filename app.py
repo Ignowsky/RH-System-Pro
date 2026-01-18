@@ -9,7 +9,7 @@ import numpy as np
 import pathlib
 
 # ==========================================
-# 1. BRAND SYSTEM (ARQDIGITAL)
+# 1. BRAND SYSTEM (Full People Analytics)
 # ==========================================
 BRAND_COLORS = {
     'primary': '#0E1F26',  # Azul Petróleo
@@ -45,7 +45,7 @@ except ImportError:
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(
-    page_title="ARQDIGITAL | People Analytics",
+    page_title="RH System Pro | People Analytics",
     page_icon="🔷",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -172,7 +172,7 @@ def process_and_predict(df_raw, model, train_features):
 # ==========================================
 
 with st.sidebar:
-    st.markdown("### ARQDIGITAL")
+    st.markdown("### RH System Pro")
     st.caption("PEOPLE ANALYTICS ENTERPRISE")
     st.success("🟢 ONLINE")
 
