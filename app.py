@@ -9,18 +9,21 @@ import numpy as np
 import pathlib
 
 # ==========================================
-# 1. BRAND SYSTEM (Full People Analytics)
+# 1. BRAND SYSTEM (ARQDIGITAL / RH SYSTEM PRO)
 # ==========================================
 BRAND_COLORS = {
     'primary': '#0E1F26',  # Azul Petróleo
     'accent': '#2FA4A9',  # Verde Técnico
-    'danger': '#D9534F',  # Vermelho Suave
-    'warning': '#F59E0B',  # Amarelo/Laranja
-    'neutral': '#8A8F95',  # Cinza
-    'light': '#E3E6E8'  # Cinza Claro
+    'light': '#E3E6E8',  # Cinza Claro
+    'bg_light': '#F7F9FA',  # Fundo da Página
+    'card_bg': '#FFFFFF',  # Fundo dos Cards
+    'danger': '#D9534F',  # Vermelho
+    'warning': '#F59E0B',  # Amarelo
+    'neutral': '#8A8F95',  # Cinza Texto
+    'text_white': '#FFFFFF'  # Texto Sidebar
 }
 
-# --- MOCKS PARA ROBUSTEZ ---
+# --- MOCKS ---
 try:
     import config
     from src.processing import data_manager
@@ -52,13 +55,16 @@ st.set_page_config(
 )
 
 # ==========================================
-# 2. CSS ENGINE
+# 2. CSS ENGINE (CORREÇÃO DOS INPUTS E BOTÕES)
 # ==========================================
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-    html, body, [class*="css"] {{
+    /* TEMA GERAL */
+    .stApp {{
+        background-color: {BRAND_COLORS['bg_light']};
+        color: {BRAND_COLORS['primary']};
         font-family: 'Inter', sans-serif;
     }}
 
@@ -67,80 +73,101 @@ st.markdown(f"""
         background-color: {BRAND_COLORS['primary']};
     }}
     [data-testid="stSidebar"] * {{
-        color: #F7F9FA !important;
-    }}
-    [data-testid="stSidebar"] input, [data-testid="stSidebar"] .stSelectbox div {{
-        color: {BRAND_COLORS['primary']} !important;
-        background-color: white !important;
+        color: {BRAND_COLORS['text_white']} !important;
     }}
 
-    /* CARDS KPI */
+    /* --- CORREÇÃO 1: INPUTS NUMÉRICOS (REMOVER BLOCO PRETO) --- */
+    /* Força fundo branco em toda a estrutura do input */
+    div[data-testid="stNumberInput"] div[data-baseweb="input"] {{
+        background-color: #FFFFFF !important;
+        border: 1px solid {BRAND_COLORS['light']} !important;
+    }}
+
+    /* Input de texto real */
+    div[data-testid="stNumberInput"] input {{
+        color: {BRAND_COLORS['primary']} !important;
+        background-color: transparent !important;
+    }}
+
+    /* Botões laterais (+/-) que estavam pretos */
+    div[data-testid="stNumberInput"] button {{
+        background-color: #FFFFFF !important;
+        color: {BRAND_COLORS['primary']} !important;
+        border-left: 1px solid {BRAND_COLORS['light']} !important;
+    }}
+    /* Ícones das setinhas */
+    div[data-testid="stNumberInput"] button svg {{
+        fill: {BRAND_COLORS['primary']} !important;
+    }}
+
+    /* --- OUTROS INPUTS (Selectbox, TextInput) --- */
+    div[data-baseweb="select"] > div, 
+    div[data-baseweb="base-input"] {{
+        background-color: #FFFFFF !important;
+        color: {BRAND_COLORS['primary']} !important;
+        border-color: {BRAND_COLORS['light']} !important;
+    }}
+    div[data-baseweb="select"] span {{
+        color: {BRAND_COLORS['primary']} !important;
+    }}
+    div[data-baseweb="select"] svg {{
+        fill: {BRAND_COLORS['primary']} !important;
+    }}
+
+    /* --- CORREÇÃO 2: BOTÕES (SIDEBAR E PRINCIPAL) --- */
+    /* Força cor de fundo Teal e Texto Branco com !important para sobrescrever temas */
+    .stButton > button {{
+        background-color: {BRAND_COLORS['accent']} !important;
+        color: white !important;
+        border: none;
+        font-weight: 600;
+        height: 3em;
+        border-radius: 4px;
+    }}
+    .stButton > button:hover {{
+        background-color: #248c91 !important;
+        color: white !important;
+    }}
+
+    /* Títulos e Métricas */
+    h1, h2, h3, h4, h5 {{ color: {BRAND_COLORS['primary']} !important; }}
+
     .metric-card {{
-        background-color: #FFFFFF;
-        border-left: 4px solid {BRAND_COLORS['accent']};
+        background-color: {BRAND_COLORS['card_bg']};
+        border-left: 5px solid {BRAND_COLORS['accent']};
         padding: 20px;
         border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         margin-bottom: 15px;
     }}
     .metric-label {{
         font-size: 11px;
         font-weight: 700;
-        color: {BRAND_COLORS['neutral']};
+        color: {BRAND_COLORS['neutral']} !important;
         text-transform: uppercase;
-        letter-spacing: 1px;
     }}
     .metric-value {{
-        font-size: 26px;
-        font-weight: 700;
-        color: {BRAND_COLORS['primary']};
-        margin-top: 5px;
-    }}
-
-    /* BOTÕES */
-    .stButton>button {{
-        background-color: {BRAND_COLORS['accent']};
-        color: white !important;
-        border-radius: 4px;
-        font-weight: 600;
-        text-transform: uppercase;
-        height: 3em;
-        border: none;
-        transition: all 0.2s;
-    }}
-    .stButton>button:hover {{
-        background-color: #248c91;
-        transform: translateY(-2px);
-    }}
-
-    /* TITULOS */
-    h1, h2, h3, h4 {{
+        font-size: 28px;
+        font-weight: 800;
         color: {BRAND_COLORS['primary']} !important;
     }}
     </style>
     """, unsafe_allow_html=True)
 
 
-# --- HELPER: CARD VISUAL ---
+# --- HELPER ---
 def kpi_card(label, value, delta=None, color="neutral"):
-    delta_html = ""
-    if delta:
-        c = BRAND_COLORS['neutral']
-        if color == "pos":
-            c = BRAND_COLORS['accent']
-        elif color == "neg":
-            c = BRAND_COLORS['danger']
-        elif color == "warn":
-            c = BRAND_COLORS['warning']  # Adicionado suporte para Amarelo
-        delta_html = f"<div style='font-size:12px; font-weight:600; color:{c}; margin-top:4px;'>{delta}</div>"
+    c_delta = BRAND_COLORS['neutral']
+    colors = {"pos": BRAND_COLORS['accent'], "neg": BRAND_COLORS['danger'], "warn": BRAND_COLORS['warning']}
+    if color in colors: c_delta = colors[color]
 
+    delta_html = f"<div style='font-size:12px; font-weight:700; color:{c_delta}; margin-top:5px;'>{delta}</div>" if delta else ""
     st.markdown(f"""
     <div class="metric-card">
         <div class="metric-label">{label}</div>
         <div class="metric-value">{value}</div>
         {delta_html}
-    </div>
-    """, unsafe_allow_html=True)
+    </div>""", unsafe_allow_html=True)
 
 
 # --- MODELO ---
@@ -153,7 +180,7 @@ def load_model_system():
         except:
             features = model.feature_names_in_ if hasattr(model, 'feature_names_in_') else None
         return model, features
-    except FileNotFoundError:
+    except:
         return None, None
 
 
@@ -168,27 +195,26 @@ def process_and_predict(df_raw, model, train_features):
 
 
 # ==========================================
-# INTERFACE
+# LÓGICA PRINCIPAL
 # ==========================================
 
 with st.sidebar:
     st.markdown("### RH System Pro")
     st.caption("PEOPLE ANALYTICS ENTERPRISE")
-    st.success("🟢 ONLINE")
-
-    st.markdown("### ⚙️ CALIBRAGEM")
+    st.markdown(
+        f"<div style='background:rgba(255,255,255,0.1); padding:10px; border-radius:5px; margin-bottom:20px;'><span style='color:{BRAND_COLORS['accent']}; font-weight:bold;'>🟢 SISTEMA ONLINE</span></div>",
+        unsafe_allow_html=True)
+    st.markdown("### ⚙️ Calibragem")
     threshold_user = st.slider("Sensibilidade", 0.0, 1.0, 0.40, 0.05)
-
     st.divider()
-    if st.button("🔄 RECARREGAR"):
+    if st.button("🔄 RECARREGAR SISTEMA"):
         st.session_state.clear()
         st.rerun()
 
-st.markdown("## Painel de Estratégia de Talentos")
+st.title("Painel de Estratégia de Talentos")
 st.markdown("Visão integrada de dados e decisões humanas.")
 st.divider()
 
-# CARGA DE DADOS
 model, train_features = load_model_system()
 
 if 'dados_rh' not in st.session_state or st.session_state['dados_rh'] is None:
@@ -197,21 +223,16 @@ if 'dados_rh' not in st.session_state or st.session_state['dados_rh'] is None:
         st.info("ℹ️ Conecte-se ao Data Warehouse.")
         if st.button("CONECTAR BASE DE DADOS", use_container_width=True):
             try:
-                path = str(config.NEW_DATA_FILE)
-                if not path.startswith('data') and not pathlib.Path(path).exists(): path = f"data/{path}"
+                path = "2026-01-19T00-31_export.csv"
+                if not pathlib.Path(path).exists(): path = str(config.NEW_DATA_FILE)
                 st.session_state['dados_rh'] = pd.read_csv(path)
                 st.rerun()
             except Exception as e:
                 st.error(f"Erro: {e}")
 else:
     df_input = st.session_state['dados_rh']
+    tab1, tab2, tab3, tab4 = st.tabs(["📊 VISÃO GERAL", "🔮 PREDIÇÃO & RISCO", "🧪 SIMULADOR", "💰 ROI"])
 
-    # ---------------- ABAS ----------------
-    tab1, tab2, tab3, tab4 = st.tabs(["📊 VISÃO GERAL", "🔮 PREDIÇÃO & DIAGNÓSTICO", "🧪 SIMULADOR", "💰 ROI"])
-
-    # =========================================
-    # ABA 1: VISÃO GERAL
-    # =========================================
     with tab1:
         c1, c2, c3, c4 = st.columns(4)
         with c1: kpi_card("Headcount", f"{len(df_input):,.0f}", "+120", "pos")
@@ -222,223 +243,191 @@ else:
         g1, g2 = st.columns(2)
         with g1:
             st.markdown("##### Distribuição por Departamento")
-            fig = px.histogram(df_input, x='Department', color='Department',
-                               color_discrete_sequence=[BRAND_COLORS['primary'], BRAND_COLORS['accent'], '#4a7c94'])
-            fig.update_layout(showlegend=False, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
-            st.plotly_chart(fig, use_container_width=True)
+            fig_d = px.histogram(df_input, x='Department', color='Department',
+                                 color_discrete_sequence=[BRAND_COLORS['primary'], BRAND_COLORS['accent']])
+            fig_d.update_layout(showlegend=False, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                                font_color=BRAND_COLORS['primary'])
+            st.plotly_chart(fig_d, use_container_width=True)
         with g2:
             st.markdown("##### Gênero")
-            fig2 = px.pie(df_input, names='Gender', hole=0.6,
-                          color_discrete_sequence=[BRAND_COLORS['accent'], BRAND_COLORS['light']])
-            fig2.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
-            st.plotly_chart(fig2, use_container_width=True)
+            fig_p = px.pie(df_input, names='Gender', hole=0.6,
+                           color_discrete_sequence=[BRAND_COLORS['accent'], BRAND_COLORS['light']])
+            fig_p.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                                font_color=BRAND_COLORS['primary'])
+            st.plotly_chart(fig_p, use_container_width=True)
 
         g3, g4 = st.columns(2)
         with g3:
-            st.markdown("##### Demografia (Histograma de Idade)")
-            fig_age = px.histogram(df_input, x='Age', nbins=20,
-                                   color_discrete_sequence=[BRAND_COLORS['primary']])
-            fig_age.update_layout(bargap=0.1, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
-            st.plotly_chart(fig_age, use_container_width=True)
+            st.markdown("##### Demografia (Idade)")
+            fig_a = px.histogram(df_input, x='Age', nbins=20, color_discrete_sequence=[BRAND_COLORS['primary']])
+            fig_a.update_layout(bargap=0.1, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                                font_color=BRAND_COLORS['primary'])
+            st.plotly_chart(fig_a, use_container_width=True)
         with g4:
-            st.markdown("##### Faixa Salarial por Departamento (Boxplot)")
-            fig_box = px.box(df_input, x='Department', y='MonthlyIncome', color='Department',
-                             color_discrete_sequence=[BRAND_COLORS['primary'], BRAND_COLORS['accent'], '#4a7c94'])
-            fig_box.update_layout(showlegend=False, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
-            st.plotly_chart(fig_box, use_container_width=True)
+            st.markdown("##### Faixa Salarial")
+            fig_b = px.box(df_input, x='Department', y='MonthlyIncome', color='Department',
+                           color_discrete_sequence=[BRAND_COLORS['primary'], BRAND_COLORS['accent']])
+            fig_b.update_layout(showlegend=False, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                                font_color=BRAND_COLORS['primary'])
+            st.plotly_chart(fig_b, use_container_width=True)
 
         st.markdown("##### Correlação: Idade vs Renda")
-        fig_scat = px.scatter(df_input.sample(min(2000, len(df_input))), x='Age', y='MonthlyIncome',
-                              color='Department', size='TotalWorkingYears',
-                              color_discrete_sequence=[BRAND_COLORS['primary'], BRAND_COLORS['accent'], '#F59E0B'])
-        fig_scat.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
-        st.plotly_chart(fig_scat, use_container_width=True)
+        fig_s = px.scatter(df_input.sample(min(2000, len(df_input))), x='Age', y='MonthlyIncome', color='Department',
+                           color_discrete_sequence=[BRAND_COLORS['primary'], BRAND_COLORS['accent'],
+                                                    BRAND_COLORS['warning']])
+        fig_s.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                            font_color=BRAND_COLORS['primary'])
+        st.plotly_chart(fig_s, use_container_width=True)
 
-    # =========================================
-    # ABA 2: PREDIÇÃO (KPIS ADICIONADOS)
-    # =========================================
     with tab2:
-        c_left, c_right = st.columns([3, 1])
-        with c_left:
+        c_l, c_r = st.columns([3, 1])
+        with c_l:
             st.markdown("##### Diagnóstico de Risco (XGBoost)")
-            st.caption(f"Analisando padrões ocultos. Threshold: {threshold_user:.0%}")
-        with c_right:
+            st.caption(f"Threshold Atual: {threshold_user:.0%}")
+        with c_r:
             if st.button("⚡ RODAR MODELO", use_container_width=True):
                 probs = process_and_predict(df_input, model, train_features)
                 df_res = df_input.copy()
                 df_res['Probabilidade'] = probs
+                df_res['Risco'] = df_res['Probabilidade'].apply(
+                    lambda x: 'CRÍTICO' if x >= 0.7 else ('ALERTA' if x >= threshold_user else 'BAIXO'))
                 st.session_state['resultado_ia'] = df_res
 
         if 'resultado_ia' in st.session_state:
-            df_view = st.session_state['resultado_ia']
-            df_view['Risco'] = df_view['Probabilidade'].apply(
-                lambda x: 'CRÍTICO' if x >= 0.7 else ('ALERTA' if x >= threshold_user else 'BAIXO'))
-
-            # --- KPIS DE RISCO (NOVO, CONFORME SOLICITADO) ---
-            n_crit = len(df_view[df_view['Risco'] == 'CRÍTICO'])
-            n_alert = len(df_view[df_view['Risco'] == 'ALERTA'])
-            n_safe = len(df_view[df_view['Risco'] == 'BAIXO'])
-
+            res = st.session_state['resultado_ia']
             k1, k2, k3 = st.columns(3)
             with k1:
-                kpi_card("Alto Risco (Crítico)", f"{n_crit}", "Ação Imediata", "neg")
+                kpi_card("Crítico", len(res[res['Risco'] == 'CRÍTICO']), "Ação Imediata", "neg")
             with k2:
-                kpi_card("Estado de Alerta", f"{n_alert}", "Monitorar", "warn")
+                kpi_card("Alerta", len(res[res['Risco'] == 'ALERTA']), "Monitorar", "warn")
             with k3:
-                kpi_card("Zona Segura", f"{n_safe}", "Estável", "pos")
-            # ------------------------------------------------
+                kpi_card("Estável", len(res[res['Risco'] == 'BAIXO']), "Seguro", "pos")
+            st.divider()
 
-            # 1. Feature Importance & Setor
-            st.markdown("---")
-            col_feat, col_risk = st.columns(2)
-
-            with col_feat:
-                st.markdown("##### 🔍 Top Fatores de Influência")
+            col_fi, col_rd = st.columns(2)
+            with col_fi:
+                st.markdown("##### 🔍 Top Fatores")
                 if hasattr(model, 'feature_importances_'):
-                    feat_imp = pd.DataFrame({
-                        'Fator': train_features,
-                        'Peso': model.feature_importances_
-                    }).sort_values('Peso', ascending=True).tail(8)
-                    fig_imp = px.bar(feat_imp, x='Peso', y='Fator', orientation='h',
-                                     color_discrete_sequence=[BRAND_COLORS['primary']])
-                    fig_imp.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-                                          margin=dict(t=0, l=0, r=0, b=0))
-                    st.plotly_chart(fig_imp, use_container_width=True)
-
-            with col_risk:
+                    feat_imp = pd.DataFrame({'Fator': train_features, 'Peso': model.feature_importances_}).sort_values(
+                        'Peso').tail(10)
+                    fig_fi = px.bar(feat_imp, x='Peso', y='Fator', orientation='h',
+                                    color_discrete_sequence=[BRAND_COLORS['primary']])
+                    fig_fi.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                                         font_color=BRAND_COLORS['primary'], margin=dict(l=10, r=10, t=30, b=10))
+                    st.plotly_chart(fig_fi, use_container_width=True)
+            with col_rd:
                 st.markdown("##### 🚨 Risco por Departamento")
-                df_risk = df_view[df_view['Risco'].isin(['CRÍTICO', 'ALERTA'])]
-                rc = df_risk.groupby('Department').size().reset_index(name='Qtd')
-                fig_r = px.bar(rc, x='Qtd', y='Department', orientation='h',
-                               color_discrete_sequence=[BRAND_COLORS['danger']])
-                fig_r.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-                                    margin=dict(t=0, l=0, r=0, b=0))
-                st.plotly_chart(fig_r, use_container_width=True)
+                df_risk = res[res['Risco'].isin(['CRÍTICO', 'ALERTA'])]
+                if not df_risk.empty:
+                    rc = df_risk.groupby('Department').size().reset_index(name='Qtd')
+                    fig_rc = px.bar(rc, x='Qtd', y='Department', orientation='h',
+                                    color_discrete_sequence=[BRAND_COLORS['danger']])
+                    fig_rc.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                                         font_color=BRAND_COLORS['primary'])
+                    st.plotly_chart(fig_rc, use_container_width=True)
+                else:
+                    st.info("Nenhum risco crítico identificado.")
 
-            # 2. Distribuições Cruzadas
-            st.markdown("---")
-            g_dem1, g_dem2 = st.columns(2)
-
-            with g_dem1:
-                st.markdown("##### Perfil de Risco por Idade")
-                fig_age_risk = px.histogram(df_view, x='Age', color='Risco', nbins=15,
-                                            color_discrete_map={'CRÍTICO': BRAND_COLORS['danger'],
-                                                                'ALERTA': BRAND_COLORS['warning'],
-                                                                'BAIXO': BRAND_COLORS['accent']},
-                                            barmode='stack')
-                fig_age_risk.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', bargap=0.1)
-                st.plotly_chart(fig_age_risk, use_container_width=True)
-
-            with g_dem2:
+            g_ar, g_sr = st.columns(2)
+            with g_ar:
+                st.markdown("##### Risco por Faixa Etária")
+                # --- CORREÇÃO 3: GRÁFICO EMPILHADO (STACKED BAR) ---
+                # Usar groupby + px.bar garante o empilhamento correto, resolvendo o problema visual
+                df_age_risk = res.groupby(['Age', 'Risco']).size().reset_index(name='Qtd')
+                fig_ar = px.bar(df_age_risk, x='Age', y='Qtd', color='Risco',
+                                color_discrete_map={'CRÍTICO': BRAND_COLORS['danger'],
+                                                    'ALERTA': BRAND_COLORS['warning'], 'BAIXO': BRAND_COLORS['accent']})
+                fig_ar.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                                     font_color=BRAND_COLORS['primary'])
+                st.plotly_chart(fig_ar, use_container_width=True)
+            with g_sr:
                 st.markdown("##### Salário vs Nível de Risco")
-                fig_box_risk = px.box(df_view, x='Risco', y='MonthlyIncome', color='Risco',
-                                      color_discrete_map={'CRÍTICO': BRAND_COLORS['danger'],
-                                                          'ALERTA': BRAND_COLORS['warning'],
-                                                          'BAIXO': BRAND_COLORS['accent']})
-                fig_box_risk.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-                                           showlegend=False)
-                st.plotly_chart(fig_box_risk, use_container_width=True)
+                fig_sr = px.box(res, x='Risco', y='MonthlyIncome', color='Risco',
+                                color_discrete_map={'CRÍTICO': BRAND_COLORS['danger'],
+                                                    'ALERTA': BRAND_COLORS['warning'], 'BAIXO': BRAND_COLORS['accent']})
+                fig_sr.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                                     font_color=BRAND_COLORS['primary'], showlegend=False)
+                st.plotly_chart(fig_sr, use_container_width=True)
 
-            # 3. Tabela
             st.markdown("##### 📋 Colaboradores em Risco")
-            st.dataframe(df_view[df_view['Probabilidade'] >= threshold_user][
-                             ['EmployeeNumber', 'Department', 'JobRole', 'MonthlyIncome', 'Probabilidade',
-                              'Risco']].sort_values('Probabilidade', ascending=False), use_container_width=True)
+            st.dataframe(res[res['Probabilidade'] >= threshold_user].sort_values('Probabilidade', ascending=False),
+                         use_container_width=True)
 
-    # =========================================
-    # ABA 3: SIMULADOR
-    # =========================================
     with tab3:
-        st.markdown("##### Simulador What-If")
-        st.caption("Simule um perfil e descubra qual variável tem maior impacto no risco.")
-
+        st.markdown("#### Simulador de Cenários What-If")
         with st.form("sim_form"):
             c1, c2, c3 = st.columns(3)
             with c1:
                 age_in = st.number_input("Idade", 18, 70, 30)
-                dept_in = st.selectbox("Departamento", ['Sales', 'R&D', 'HR'])
-                role_in = st.selectbox("Cargo", ['Sales Executive', 'Research Scientist', 'Manager'])
+                dept_opts = sorted(df_input['Department'].unique().tolist())
+                role_opts = sorted(df_input['JobRole'].unique().tolist())
+                dept_in = st.selectbox("Departamento", dept_opts)
+                role_in = st.selectbox("Cargo", role_opts)
             with c2:
-                inc_in = st.number_input("Salário (R$)", 1500, 50000, 4500)
+                inc_in = st.number_input("Salário (R$)", 1500, 50000, 5000)
                 ot_in = st.selectbox("Hora Extra?", ['Yes', 'No'])
                 dist_in = st.slider("Distância", 1, 50, 10)
             with c3:
                 env_in = st.slider("Ambiente (1-4)", 1, 4, 3)
                 yrs_in = st.number_input("Anos de Empresa", 0, 40, 5)
-                mar_in = st.selectbox("Estado Civil", ['Single', 'Married', 'Divorced'])
+                mar_in = st.selectbox("Estado Civil", sorted(df_input['MaritalStatus'].unique().tolist()))
 
             if st.form_submit_button("🔍 CALCULAR RISCO & IMPACTO"):
-                base_dict = {
-                    'Age': [age_in], 'Department': [dept_in], 'JobRole': [role_in], 'MonthlyIncome': [inc_in],
-                    'OverTime': [ot_in], 'DistanceFromHome': [dist_in], 'EnvironmentSatisfaction': [env_in],
-                    'TotalWorkingYears': [yrs_in], 'YearsAtCompany': [yrs_in], 'MaritalStatus': [mar_in],
-                    'BusinessTravel': ['Travel_Rarely'], 'Gender': ['Male'], 'EducationField': ['Life Sciences']
-                }
-                df_base = pd.DataFrame(base_dict)
-                prob_base = process_and_predict(df_base, model, train_features)[0]
+                base_d = {'Age': [age_in], 'Department': [dept_in], 'JobRole': [role_in], 'MonthlyIncome': [inc_in],
+                          'OverTime': [ot_in], 'DistanceFromHome': [dist_in], 'EnvironmentSatisfaction': [env_in],
+                          'TotalWorkingYears': [yrs_in], 'YearsAtCompany': [yrs_in], 'MaritalStatus': [mar_in],
+                          'BusinessTravel': ['Travel_Rarely'], 'Gender': ['Male'], 'EducationField': ['Life Sciences']}
+                df_b = pd.DataFrame(base_d)
+                prob_b = process_and_predict(df_b, model, train_features)[0]
 
-                # ANÁLISE DE SENSIBILIDADE
-                scenarios = []
-                # 1. Hora Extra
+                scen = []
                 new_ot = 'No' if ot_in == 'Yes' else 'Yes'
-                df_ot = df_base.copy();
+                df_ot = df_b.copy();
                 df_ot['OverTime'] = new_ot
-                prob_ot = process_and_predict(df_ot, model, train_features)[0]
-                scenarios.append({'Mudança': f'Hora Extra -> {new_ot}', 'Impacto': prob_ot - prob_base})
+                scen.append({'Mudança': f'Hora Extra -> {new_ot}',
+                             'Impacto': process_and_predict(df_ot, model, train_features)[0] - prob_b})
 
-                # 2. Salário
-                df_inc = df_base.copy();
+                df_inc = df_b.copy();
                 df_inc['MonthlyIncome'] = inc_in * 1.2
-                prob_inc = process_and_predict(df_inc, model, train_features)[0]
-                scenarios.append({'Mudança': 'Salário +20%', 'Impacto': prob_inc - prob_base})
-
-                # 3. Ambiente
-                if env_in < 4:
-                    df_env = df_base.copy();
-                    df_env['EnvironmentSatisfaction'] = env_in + 1
-                    prob_env = process_and_predict(df_env, model, train_features)[0]
-                    scenarios.append({'Mudança': 'Ambiente +1 pt', 'Impacto': prob_env - prob_base})
+                scen.append({'Mudança': 'Salário +20%',
+                             'Impacto': process_and_predict(df_inc, model, train_features)[0] - prob_b})
 
                 st.divider()
                 cr1, cr2 = st.columns([1, 2])
                 with cr1:
-                    lbl = "ALTO" if prob_base > threshold_user else "BAIXO"
-                    color_delta = "neg" if prob_base > threshold_user else "pos"
-                    kpi_card("Probabilidade Atual", f"{prob_base:.1%}", lbl, color_delta)
-
+                    lbl = "ALTO" if prob_b > threshold_user else "BAIXO"
+                    color_delta = "neg" if prob_b > threshold_user else "pos"
+                    kpi_card("Risco Atual", f"{prob_b:.1%}", lbl, color_delta)
                 with cr2:
-                    st.markdown("##### 📉 Impacto de Mudanças")
-                    df_sens = pd.DataFrame(scenarios).sort_values('Impacto')
-                    fig_torn = px.bar(df_sens, x='Impacto', y='Mudança', orientation='h',
-                                      text_auto='.1%',
-                                      color='Impacto',
-                                      color_continuous_scale=[BRAND_COLORS['accent'], BRAND_COLORS['danger']])
-                    fig_torn.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
-                    st.plotly_chart(fig_torn, use_container_width=True)
+                    df_s = pd.DataFrame(scen).sort_values('Impacto')
+                    fig_t = px.bar(df_s, x='Impacto', y='Mudança', orientation='h', text_auto='.1%', color='Impacto',
+                                   color_continuous_scale=[BRAND_COLORS['accent'], BRAND_COLORS['danger']])
+                    fig_t.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                                        font_color=BRAND_COLORS['primary'], uniformtext_minsize=8,
+                                        uniformtext_mode='hide')
+                    fig_t.update_traces(textfont_color='white')
+                    st.plotly_chart(fig_t, use_container_width=True)
 
-    # =========================================
-    # ABA 4: ROI
-    # =========================================
     with tab4:
-        st.markdown("##### Calculadora ROI")
+        st.markdown("#### Calculadora ROI")
         if 'resultado_ia' in st.session_state:
             df_roi = st.session_state['resultado_ia']
-            c1, c2, c3 = st.columns(3)
-            cr = c1.number_input("Custo Reposição", 40000)
-            ci = c2.number_input("Custo Intervenção", 500)
-            ef = c3.slider("Taxa Sucesso %", 0, 100, 50) / 100
+            c_r1, c_r2, c_r3 = st.columns(3)
+            c_rep = c_r1.number_input("Custo Reposição", 40000)
+            c_int = c_r2.number_input("Custo Intervenção", 500)
+            ef_rt = c_r3.slider("Taxa Sucesso %", 0, 100, 50) / 100
 
             tgt = len(df_roi[df_roi['Probabilidade'] >= threshold_user])
-            sav = int(tgt * 0.45 * ef)
-            roi = (sav * cr) - (tgt * ci)
+            sav = int(tgt * 0.45 * ef_rt)
+            roi_l = (sav * c_rep) - (tgt * c_int)
 
             fig_w = go.Figure(go.Waterfall(measure=["relative", "relative", "total"], x=["Economia", "Custo", "ROI"],
-                                           y=[sav * cr, -tgt * ci, roi], connector={"line": {"color": "#cbd5e1"}},
+                                           y=[sav * c_rep, -tgt * c_int, roi_l],
+                                           connector={"line": {"color": "#cbd5e1"}},
                                            decreasing={"marker": {"color": BRAND_COLORS['danger']}},
                                            increasing={"marker": {"color": BRAND_COLORS['accent']}},
                                            totals={"marker": {"color": BRAND_COLORS['primary']}}))
-            fig_w.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+            fig_w.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                                font_color=BRAND_COLORS['primary'])
             st.plotly_chart(fig_w, use_container_width=True)
-            kpi_card("ROI Líquido", f"R$ {roi / 1000:,.0f}k")
-        else:
-            st.info("Execute a Aba 2 primeiro.")
+            kpi_card("ROI Líquido", f"R$ {roi_l / 1000:,.0f}k")

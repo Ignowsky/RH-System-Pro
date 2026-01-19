@@ -1,53 +1,52 @@
-# 🏢 RH System Pro - Enterprise People Analytics
+# 🏢 RH System Pro v3.0 - Enterprise People Analytics
 
-![Python](https://img.shields.io/badge/Python-3.9%2B-blue)
-![Streamlit](https://img.shields.io/badge/Streamlit-App-red)
-![Scikit-Learn](https://img.shields.io/badge/ML-Scikit--Learn-orange)
-![Status](https://img.shields.io/badge/Status-Production-green)
+![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![XGBoost](https://img.shields.io/badge/XGBoost-Sniper_Model-FLAT?style=for-the-badge&color=EB4223)
+![Streamlit](https://img.shields.io/badge/Streamlit-App_v3.0-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)
+![CSS3](https://img.shields.io/badge/UI%2FUX-Custom_CSS-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![Status](https://img.shields.io/badge/Status-Production-2EA44F?style=for-the-badge)
 
-> **"Data Science não é apenas treinar modelos, é entregar valor na ponta."**
+> **"A IA não deve apenas prever o futuro, deve mostrar quais alavancas puxar para mudá-lo."**
 
-O **RH System Pro** é uma plataforma End-to-End de People Analytics projetada para prever o risco de turnover (rotatividade) de colaboradores. Diferente de notebooks estáticos, este projeto simula um ambiente de produção corporativo, capaz de processar grandes volumes de dados, validar regras de negócio e entregar insights acionáveis via Dashboard Interativo.
+O **RH System Pro** é uma plataforma End-to-End de People Analytics que evoluiu de um modelo preditivo para um **Sistema de Suporte à Decisão (DSS)**. Nesta versão 3.0, utilizamos **XGBoost** e uma interface focada em **Design System** para não apenas identificar o risco de turnover, mas também calcular o ROI financeiro da retenção e simular cenários estratégicos em tempo real.
 
 🌐 **Acesse a Aplicação ao Vivo:** [https://rh-system-pro.streamlit.app](https://rh-system-pro.streamlit.app)
 
 ---
 
-## 🎯 O Problema de Negócio
+## 🎯 O Desafio de Negócio
 
-A perda de talentos custa caro. Substituir um funcionário pode custar até 2x o seu salário anual, sem contar a perda de conhecimento e impacto na cultura.
+Não basta saber *quem* vai sair. O RH moderno precisa saber:
+1.  **Quanto** custa perder esse talento? (ROI)
+2.  **O que** acontece se eu aumentar o salário ou reduzir a carga horária? (Simulação)
+3.  **Por que** o risco é alto? (Explicabilidade)
 
-O desafio deste projeto foi responder a três perguntas:
-1.  **Quem** está em risco de sair da empresa?
-2.  **Por que** eles estão saindo? (Burnout, Salário, Estagnação?)
-3.  **Como** entregar essa informação ao RH de forma rápida e escalável?
+Este projeto resolve essas questões simulando um ambiente corporativo de alta escala, focado na experiência do usuário final (Gestor de RH).
 
 ---
 
-## ⚙️ A Solução e Arquitetura
+## ⚙️ Arquitetura e Engenharia (MLOps)
 
-O sistema foi construído seguindo princípios de **Engenharia de Machine Learning (MLOps)** e **Clean Architecture**.
+O sistema foi construído seguindo princípios de **Clean Architecture**, abandonando notebooks estáticos por uma estrutura modular de produção.
 
 ### 1. Stack Tecnológico
-* **Linguagem:** Python 3.10+
-* **Frontend:** Streamlit (com Plotly para visualização de dados).
-* **Backend/ML:** Scikit-learn, Pandas, Numpy, Joblib.
-* **Controle de Versão:** Git & GitHub.
-* **Deploy:** Streamlit Cloud (CI/CD integrado).
+* **Core ML:** ![XGBoost](https://img.shields.io/badge/-XGBoost-EB4223?style=flat-square&logo=xgboost&logoColor=white) (Motor Preditivo Otimizado) + Scikit-learn (Pipelines).
+* **Frontend:** ![Streamlit](https://img.shields.io/badge/-Streamlit-FF4B4B?style=flat-square&logo=streamlit&logoColor=white) + **CSS Injection** (Design System Customizado).
+* **Data Viz:** ![Plotly](https://img.shields.io/badge/-Plotly-3F4F75?style=flat-square&logo=plotly&logoColor=white) (Gráficos Interativos).
+* **Engenharia:** Pandas, Numpy, Joblib (Processamento de 50k+ registros).
+* **Deploy:** Streamlit Cloud (CI/CD via GitHub).
 
 ### 2. Estrutura Modular
-O projeto abandonou a estrutura linear de Jupyter Notebooks para uma arquitetura de pacotes Python robusta:
-
 ```text
-turnover_project/
-├── config.py              # Gerenciamento centralizado de caminhos e variáveis
-├── app.py                 # Aplicação Frontend (Streamlit)
+rh_system_pro/
+├── config.py              # Centralização de variáveis e Tokens de Design
+├── app.py                 # Aplicação Frontend e Orquestrador UI
 ├── src/
-│   ├── processing/        # Pipeline de Limpeza e Feature Engineering (ETL)
-│   ├── train/             # Pipeline de Treinamento e Persistência do Modelo
-│   └── predict/           # Pipeline de Inferência e Validação (Backtesting)
-├── models/                # Artefatos serializados (.pkl)
-└── data/                  # Armazenamento de dados (Raw e Processed)
+│   ├── processing/        # ETL e Engenharia de Atributos
+│   ├── train/             # Pipeline de Treino (XGBoost) e Serialização
+│   └── predict/           # Motor de Inferência e Lógica de Sensibilidade
+├── models/                # Artefatos binários (.pkl)
+└── data/                  # Gestão de Dados (Raw e Processed)
 ```
 ---
 # 🚀 Funcionalidades Principais
@@ -65,6 +64,23 @@ Implementação de macanismos de `reindex` e tratamento de nulos para garantir q
 - **Visão Retrovisor:** Análise demográfica, Salarial e Horas Extras.
 - **Visão Preditiva (IA):** Classificação de risco (Crítico/Alerta/Baixo) e lista priorizada para ação do RH.
 
+## 5. Novas Funcionalidades.
+
+### 🎨 5.1. Design System ("Silêncio Visual")
+- **A interface foi reconstruída utilizando princípios de UI/UX para reduzir a carga cognitiva.**
+- **Paleta de Cores: Azul Petróleo Profundo (Estrutura) e Verde Técnico (Ação).**
+    
+- **Visibilidade: Contraste forçado via CSS para garantir leitura em qualquer modo (Light/Dark).**
+    
+### 🧪 5.2. Simulador "What-If"
+- **A IA saiu da caixa preta. O gestor pode alterar variáveis de um funcionário (ex: dar aumento de 20% ou remover horas extras) e ver, em tempo real, como a probabilidade de turnover cai.**
+    
+### 💰 5.3 Calculadora de ROI
+- **O sistema cruza a probabilidade de saída com o Custo de Reposição (Recrutamento + Treinamento) vs. Custo de Intervenção, mostrando a economia líquida gerada pela retenção.**
+    
+### 🤖 5.4. XGBoost Sniper
+- **Substituímos a Decision Tree pelo XGBoost, capturando padrões não-lineares complexos de comportamento humano. O modelo entrega não só o risco, mas o Feature Importance (quais variáveis pesam mais na decisão).**
+
 ---
 
 # 🧠 Performance do Modelo
@@ -72,10 +88,10 @@ O modelo preditivo (Decision Tree Otimizada com Class Weights) foi validado não
 
 Simulamos cenários reais de comportamento humano (ex: Burnout por excesso de hora extra) em dados para garantir que a IA aprendeu as regras de negócio corretamente.
 
-| Métrica |Resultado|Interpretação|
-|---------|---------|-------------|
-| Recall  |~76%|O modelo identifica 76% dos funcionários que realmente sairiam.|
-|Threshold|0.30|Calibrado para ser mais sensível (melhor pecar pelo excesso de cuidado).|
+| Métrica | Resultado | Interpretação                                                            |
+|---------|-----------|--------------------------------------------------------------------------|
+| Recall  | ~72%      | O modelo identifica 72% dos funcionários que realmente sairiam.          |
+|Threshold| 0.30      | Calibrado para ser mais sensível (melhor pecar pelo excesso de cuidado). |
 
 > ***Optamos por maximizar o Recall em vez da Acurácia, pois o custo de deixar um talento sair (Falso Negativo) é muito maior doque o custo de uma conversa preventiva com alguém que ficaria (Falso Positivo).***
 
@@ -84,7 +100,7 @@ Simulamos cenários reais de comportamento humano (ex: Burnout por excesso de ho
 Para garantir que o modelo não sofreu *overfitting*, realizamos um **Backtest Lógico** em uma base sintética de 25.000 registros simulando o comportamento real de turnover (Burnout/Salário).
 
 **Evidência de Execução:**
-![Validação do Modelo](assets/validate_backstaging.png)
+![Validação do Modelo](assets/validate_backstaging_XGB.png)
 
 > *O script `src/predict/validate.py` aplica a lógica de negócio e compara com as previsões do modelo, confirmando a robustez da solução.*
 
@@ -92,17 +108,28 @@ Para garantir que o modelo não sofreu *overfitting*, realizamos um **Backtest L
 # 📸 Imagens do Projeto
 
 ### Visão Inicial (Dashboard)
-![Dashboard Geral do RH](assets/visao_inicial_dash.png)
+![visao_inicial_dash_XGB.png](assets/visao_inicial_dash_XGB.png)
 
-### Visão Final (Dashboard)
-![Dashboard Geral do RH](assets/visao_final_dash.png)
+### Visão do Meio (Dashboard)
+![visao_meio_dash_XGB.png](assets/visao_meio_dash_XGB.png)
 
+### Visão do Fim (Dashboard)
+![visao_fim_dash_XGB.png](assets/visao_fim_dash_XGB.png)
 
 ### Visão Inicial (Modelo Preditivo)
-![Visão Inicial do Modelo Preditivo](assets/visao_inicial_modelo_preventivo.png)
+![visao_inicial_modelo_preventivo_XGB.png](assets/visao_inicial_modelo_preventivo_XGB.png)
+
+### Visão do Meio (Modelo Preditivo)
+![visao_meio_modelo_preventivo_XGB.png](assets/visao_meio_modelo_preventivo_XGB.png)
 
 ### Visão Final (Modelo Preditivo)
-![Visão Final do Modelo Preditivo](assets/visao_final_modelo_preventivo.png)
+![visao_fim_modelo_preventivo_XGB.png](assets/visao_fim_modelo_preventivo_XGB.png)
+
+### Visão do Simulador (Simulador XGBoost)
+![simulador_xgb.png](assets/simulador_xgb.png)
+
+### Visão do ROI 
+![roi_turnover_xgb.png](assets/roi_turnover_xgb.png)
 
 ---
 # 🛠️ Como rodar localmente
