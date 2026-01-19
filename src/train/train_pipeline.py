@@ -66,7 +66,7 @@ def training_model(X_train, y_train):
     print(f"[INFO] Treinando o dataset...")
 
     model = XGBClassifier(
-        scale_pos_weight = 2,
+        scale_pos_weight = 1.85,
         learning_rate = 0.1,
         n_estimators = 750,
         max_depth = 5,

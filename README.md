@@ -84,14 +84,14 @@ Implementação de macanismos de `reindex` e tratamento de nulos para garantir q
 ---
 
 # 🧠 Performance do Modelo
-O modelo preditivo (Decision Tree Otimizada com Class Weights) foi validado não apenas com métricas estatísticas, mas com **Backtesting Lógico**.
+O modelo preditivo (XGBoost tunado) foi validado não apenas com métricas estatísticas, mas com **Backtesting Lógico**.
 
 Simulamos cenários reais de comportamento humano (ex: Burnout por excesso de hora extra) em dados para garantir que a IA aprendeu as regras de negócio corretamente.
 
 | Métrica | Resultado | Interpretação                                                            |
 |---------|-----------|--------------------------------------------------------------------------|
-| Recall  | ~72%      | O modelo identifica 72% dos funcionários que realmente sairiam.          |
-|Threshold| 0.30      | Calibrado para ser mais sensível (melhor pecar pelo excesso de cuidado). |
+| Recall  | ~80%      | O modelo identifica 80% dos funcionários que realmente sairiam.          |
+|Threshold| 0.25      | Calibrado para ser mais sensível (melhor pecar pelo excesso de cuidado). |
 
 > ***Optamos por maximizar o Recall em vez da Acurácia, pois o custo de deixar um talento sair (Falso Negativo) é muito maior doque o custo de uma conversa preventiva com alguém que ficaria (Falso Positivo).***
 

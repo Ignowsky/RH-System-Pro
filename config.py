@@ -15,5 +15,5 @@ MODEL_PATH = MODEL_DIR / 'xgboost_model_v2.pkl'
 FEATURES_PATH = MODEL_DIR / 'features.pkl'
 
 # Hiperparâmetros de Negócio
-THRESHOLD_ALERT = 0.30
+THRESHOLD_ALERT = 0.20
 RANDOM_STATE = 42
